@@ -366,7 +366,7 @@ class BayesianConvTranspose2d(BayesianModule):
 
     def forward(self, x, output_size):
 
-        assert.isinstance(self.padding, tuple)
+        assert isinstance(self.padding, tuple)
         num_spatial_dims = 2
         output_padding = self._output_padding(input, output_size, self.stride, self.padding, self.kernel_size, num_spatial_dims, self.dilation)
 
