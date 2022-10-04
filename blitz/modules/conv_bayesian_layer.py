@@ -189,11 +189,11 @@ class BayesianConv2d(BayesianModule):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.freeze = freeze
-        self.kernel_size = kernel_size
+        self.kernel_size = _pair(kernel_size)
         self.groups = groups
-        self.stride = stride
-        self.padding = padding
-        self.dilation = dilation
+        self.stride = _pair(stride)
+        self.padding = padding if isinstance(padding, str) else _pair(padding)
+        self.dilation = _pair(dilation)
         self.bias = bias
 
 
@@ -296,14 +296,15 @@ class BayesianConvTranspose2d(BayesianModule):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.freeze = freeze
-        self.kernel_size = kernel_size
+        self.kernel_size = _pair(kernel_size)
         self.groups = groups
-        self.stride = stride
-        self.padding = padding
-        self.dilation = dilation
+        self.stride = _pair(stride)
+        self.padding = padding if isinstance(padding, str) else _pair(padding)
+        self.dilation = _pair(dilation)
         self.bias = bias
         self.transposed = transposed
         self.output_padding = output_padding
+
 
         self.posterior_mu_init = posterior_mu_init
         self.posterior_rho_init = posterior_rho_init
