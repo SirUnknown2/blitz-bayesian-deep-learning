@@ -6,7 +6,7 @@ from torch.nn import functional as F
 from blitz.modules.base_bayesian_module import BayesianModule
 from blitz.modules.weight_sampler import TrainableRandomDistribution, PriorWeightDistribution
 
-from Typing import List
+from typing import List
 
 class BayesianConv1d(BayesianModule):
 
