@@ -26,11 +26,11 @@ def variational_estimator(nn_class):
             Parameters:
                 N/a
 
-            Returns torch.tensor with 0 dim.      
-        
+            Returns torch.tensor with 0 dim.
+
         """
         return kl_divergence_from_nn(self)
-    
+
     setattr(nn_class, "nn_kl_divergence", nn_kl_divergence)
 
     def sample_elbo(self,
@@ -60,7 +60,7 @@ def variational_estimator(nn_class):
 
         loss = 0
         for _ in range(sample_nbr):
-            outputs = self(inputs)
+            outputs = self.forward(inputs)
             loss += criterion(outputs, labels)
             loss += self.nn_kl_divergence() * complexity_cost_weight
         return loss / sample_nbr
@@ -78,7 +78,7 @@ def variational_estimator(nn_class):
             This version of the function returns the performance part and complexity part of the loss individually
             as well as an array of predictions
 
-                The ELBO Loss consists of the sum of the KL Divergence of the model 
+                The ELBO Loss consists of the sum of the KL Divergence of the model
                  (explained above, interpreted as a "complexity part" of the loss)
                  with the actual criterion - (loss function) of optimization of our model
                  (the performance part of the loss).
@@ -92,14 +92,14 @@ def variational_estimator(nn_class):
                         The shape of the labels must match the label-parameter shape of the criterion (one hot encoded or as index, if needed)
                 criterion: torch.nn.Module, custom criterion (loss) function, torch.nn.functional function -> criterion to gather
                             the performance cost for the model
-                sample_nbr: int -> The number of times of the weight-sampling and predictions done in our Monte-Carlo approach to 
+                sample_nbr: int -> The number of times of the weight-sampling and predictions done in our Monte-Carlo approach to
                             gather the loss to be .backwarded in the optimization of the model.
             Returns:
                 array of predictions
                 ELBO Loss
                 performance part
                 complexity part
-        
+
         """
 
         loss = 0
@@ -115,7 +115,7 @@ def variational_estimator(nn_class):
         return np.array(y_hat), (likelihood_cost + complexity_cost) / sample_nbr,\
                likelihood_cost / sample_nbr,\
                complexity_cost / sample_nbr
-    
+
     setattr(nn_class, "sample_elbo_detailed_loss", sample_elbo_detailed_loss)
 
     def freeze_model(self):
@@ -132,7 +132,7 @@ def variational_estimator(nn_class):
         """
         Unfreezes the model by letting it draw its weights with uncertanity from their correspondent distributions
         """
-        
+
         for module in self.modules():
             if isinstance(module, (BayesianModule)):
                 module.freeze = False
@@ -150,7 +150,7 @@ def variational_estimator(nn_class):
             eprint={1906.05323},
             archivePrefix={arXiv},
             primaryClass={cs.NE}
-        }   
+        }
 
 
         """
@@ -180,28 +180,28 @@ def variational_estimator(nn_class):
         """
         result = torch.stack([self(inputs) for _ in range(sample_nbr)])
         return result.mean(dim=0), result.std(dim=0)
-    
+
     setattr(nn_class, 'mfvi_forward', mfvi_forward)
-    
+
     def forward_with_sharpening(self, x, labels, criterion):
         preds = self(x)
         loss = criterion(preds, labels)
-        
+
         for module in self.modules():
             if isinstance(module, (BayesianRNN)):
                 module.loss_to_sharpen = loss
-                
+
         y_hat: self(x)
-        
+
         for module in self.modules():
             if isinstance(module, (BayesianRNN)):
                 module.loss_to_sharpen = None
-                
+
         return self(x,)
-        
+
     setattr(nn_class, 'forward_with_sharpening', forward_with_sharpening)
-        
-        
-        
+
+
+
 
     return nn_class
