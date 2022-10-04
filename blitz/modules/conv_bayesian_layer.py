@@ -189,11 +189,11 @@ class BayesianConv2d(BayesianModule):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.freeze = freeze
-        self.kernel_size = _pair(kernel_size)
+        self.kernel_size = (kernel_size, kernel_size)
         self.groups = groups
-        self.stride = _pair(stride)
-        self.padding = padding if isinstance(padding, str) else _pair(padding)
-        self.dilation = _pair(dilation)
+        self.stride = (stride, stride)
+        self.padding = padding if isinstance(padding, str) else (padding, padding)
+        self.dilation = (dilation, dilation)
         self.bias = bias
 
 
@@ -296,11 +296,11 @@ class BayesianConvTranspose2d(BayesianModule):
         self.in_channels = in_channels
         self.out_channels = out_channels
         self.freeze = freeze
-        self.kernel_size = _pair(kernel_size)
+        self.kernel_size = (kernel_size, kernel_size)
         self.groups = groups
-        self.stride = _pair(stride)
-        self.padding = padding if isinstance(padding, str) else _pair(padding)
-        self.dilation = _pair(dilation)
+        self.stride = (stride, stride)
+        self.padding = padding if isinstance(padding, str) else (padding, padding)
+        self.dilation = (dilation, dilation)
         self.bias = bias
         self.transposed = transposed
         self.output_padding = output_padding
@@ -320,7 +320,7 @@ class BayesianConvTranspose2d(BayesianModule):
 
         if self.bias:
             self.bias_mu = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_mu_init, 0.1))
-            self.bias_rho = nn.Parameter(torch.Tensor(out_channels).normal_(posterioposterior_rho_init, 0.1))
+            self.bias_rho = nn.Parameter(torch.Tensor(out_channels).normal_(posterior_rho_init, 0.1))
             self.bias_sampler = TrainableRandomDistribution(self.bias_mu, self.bias_rho)
             self.bias_prior_dist = PriorWeightDistribution(self.prior_pi, self.prior_sigma_1, self.prior_sigma_2, dist = self.prior_dist)
         else:
@@ -333,7 +333,7 @@ class BayesianConvTranspose2d(BayesianModule):
     def _output_padding(self, input, output_size, stride, padding, kernel_size, num_spatial_dims, dilation):
 
         if output_size is None:
-            ret = _single(self.output_padding)
+            ret = (self.output_padding)
         else:
             has_batch_dim = input.dim() == num_spatial_dims + 2
             num_non_spatial_dims == 2 if has_batch_dim else 1
