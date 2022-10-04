@@ -207,8 +207,8 @@ class BayesianConv2d(BayesianModule):
         self.prior_dist = prior_dist
 
         #our weights
-        self.weight_mu = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).normal_(posterior_mu_init, 0.1))
-        self.weight_rho = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).normal_(posterior_rho_init, 0.1))
+        self.weight_mu = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *self.kernel_size).normal_(posterior_mu_init, 0.1))
+        self.weight_rho = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *self.kernel_size).normal_(posterior_rho_init, 0.1))
         self.weight_sampler = TrainableRandomDistribution(self.weight_mu, self.weight_rho)
 
         #our biases
@@ -314,8 +314,8 @@ class BayesianConvTranspose2d(BayesianModule):
         self.prior_pi = prior_pi
         self.prior_dist = prior_dist
 
-        self.weight_mu = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).normal_(posterior_mu_init, 0.1))
-        self.weight_rho = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *kernel_size).normal_(posterior_rho_init, 0.1))
+        self.weight_mu = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *self.kernel_size).normal_(posterior_mu_init, 0.1))
+        self.weight_rho = nn.Parameter(torch.Tensor(out_channels, in_channels // groups, *self.kernel_size).normal_(posterior_rho_init, 0.1))
         self.weight_sampler = TrainableRandomDistribution(self.weight_mu, self.weight_rho)
 
         if self.bias:
